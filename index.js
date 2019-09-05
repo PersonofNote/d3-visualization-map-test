@@ -1,4 +1,7 @@
 
+var loaded = false;
+
+//Use library to create map
 var worldMap = new Datamap({
   element: document.getElementById('map-container'),
   scope: 'world',
@@ -10,53 +13,26 @@ var worldMap = new Datamap({
 
 });
 
-//Simplest dataset
-var testData = [{
-      name: 'Waldo',
-      latitude: 36.16,
-      longitude: 115.1398,
-      radius: 10
-    },{
-      name: 'Carmen San Diego',
-      latitude: 50.07,
-      longitude: 78.43,
-      radius: 10
-    }
-  ];
 
-testArr = Array.from(testData);
-
+var rows = [];
 //Dataset obtained from data.gov
-var dataSet = "landslide-test-data.csv";
+var dataSet = "landslide-test-data-truncated.csv";
 var landslides = d3.csv(dataSet, function(d) {
-      return {
-        Latitude: d.Latitude, Longitude: d.Longitude, Casualties: d.Casualties, Date: d.Date
-     };
-  
-    }, function(error, rows) {
-        d3.select("#output")
-            .text(
-                rows[0].Latitude + " " +
-                rows[0].Longitude + " " +
-                "had " + rows[0].Casualties + " casualties")
+  console.log(d.date_);
+  rows.push(d)
+  addTomap(d);
+    }, function(error, d) {
+        //Error
     });
 
 
-//Datamaps library bubble function
-  worldMap.bubbles(testData, {
-      popupTemplate: function (geo, data) {
-              return ['<div class="hoverinfo">' +  data.name +
-              '</div>'].join('');
-      }
-  });
-
-
-//d3 add text
-
-for (var i = 0; i < testArr.length; i++) {
-  d3.select("body").append("p").text(testArr[i].name);
-  console.log(testArr[i]);
+function addTomap(d) {
+  d3.select("body").append("p").text(d.date_);
 }
+
+
+
+
 
 
   
