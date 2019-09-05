@@ -1,5 +1,12 @@
-#map-container {
-    height: 75vh;
-    width: 75vw;
+#worldMap {
     margin: auto;
+}
+
+.dot {
+    z-index: 10;
+    fill: blue;
+}
+
+.dot:hover {
+    fill: orange;
 }
