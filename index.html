@@ -9,8 +9,13 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <svg id="worldMap" width="900" height="550"></svg>
-
+    <svg id="worldMap" >
+      <radialGradient id="grad" fx="0.5" fy="0.5" r="1" >
+        <stop stop-opacity="1" offset="0"/>
+        <stop stop-opacity="0" offset="0.6"/>
+      </radialGradient>
+    </svg>
+<button id="playbutton" class="playbutton" >PLAY</button>
   <script src="index.js"> </script>
  
   </body>

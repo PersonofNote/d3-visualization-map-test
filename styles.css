@@ -1,12 +1,25 @@
 #worldMap {
     margin: auto;
+    fill: gray;
+    stroke: gray;
+    width: 100vw;
+    height: 75vh;
+    margin: auto;
 }
 
 .dot {
     z-index: 10;
     fill: blue;
+    stroke: none;
 }
 
 .dot:hover {
     fill: orange;
+}
+
+.playbutton {
+    padding: 20px;
+    border-radius: 100px;
+    background-color: blue;
+    color: white;
 }
