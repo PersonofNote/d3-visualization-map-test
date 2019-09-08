@@ -12,6 +12,8 @@ var projection = d3.geoMercator()
 const playButton = document.getElementById("playbutton");
 playButton.addEventListener("click", togglePlay);
 
+const timeline = document.getElementById('timeline');
+
 function drawMap() { 
 d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson", function(data){  
     // Draw the map
@@ -68,7 +70,7 @@ function makeTimeline() {
 * Initialize animation variables
 **/
 var frame = 0;
-var startYear = 2011;
+var startYear = 2004;
 var displayYear = startYear;
 var interval;
 var speed = 300; // ms
@@ -92,14 +94,14 @@ function togglePlay() {
     playing=false;
     clearInterval( interval );
     //addVideo();
-    d3.selectAll('play-button')
+    d3.selectAll('playbutton')
     .text("Pause");
   }
   else if (playing == false) {
     interval = setInterval(function () {
       frame++;
       displayYear = frame+startYear;
-      //timeline.value = currentYear;
+      timeline.value = displayYear;
       console.log(displayYear);
       if(displayYear >= thisYear){
         frame = 0;
@@ -108,8 +110,8 @@ function togglePlay() {
           .attr("opacity", 0);
       }
       //Set play button
-      d3.selectAll('play-button')
-        .text("Pause");
+      d3.selectAll('playbutton')
+        .text("Play");
      //Change bubble opacity to one if year matches
      d3.selectAll(`.dot-${displayYear}`)
       .transition()

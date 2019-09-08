@@ -1,7 +1,20 @@
+:root {
+    --bg-color: #EDF5E1;
+    --dark-accent: #05386B;
+    --main: #379683;
+    --light: #5CDB95;
+    --lightest: #EDF5E1;
+}
+
+
+body {
+    background-color: var(--bg-color);
+}
+
 #worldMap {
     margin: auto;
-    fill: gray;
-    stroke: gray;
+    fill: #379683;
+    stroke: #379683;
     width: 100vw;
     height: 75vh;
     margin: auto;
@@ -20,6 +33,26 @@
 .playbutton {
     padding: 20px;
     border-radius: 100px;
-    background-color: blue;
-    color: white;
+    background-color: var(--dark-accent);
+    color: var(--bg-color);
 }
+
+.controls {
+    padding: 4rem;
+    width: 80%;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.timeline-container {
+    width: 80%;
+    display: flex;
+    align-items: center;
+}
+
+#timeline {
+    width: 80%;
+    margin: auto;
+}
+

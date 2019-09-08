@@ -15,7 +15,17 @@
         <stop stop-color="blue" stop-opacity="0.2" offset="0.6"/>
       </radialGradient>
     </svg>
-<button id="playbutton" class="playbutton" >PLAY</button>
+    <section class="controls">
+      <div class="play-container">
+        <button id="playbutton" class="playbutton" >PLAY</button>
+        Year: <span id="frame">1776</span>
+      </div>
+      <div class="timeline-container">
+        <input id="timeline" type="range" min="1776" max="2018" value="1900" step="1" list="tickmarks" />
+      <datalist id="tickmarks"> </datalist> 
+      </div>
+    </section>
+
   <script src="index.js"> </script>
  
   </body>
