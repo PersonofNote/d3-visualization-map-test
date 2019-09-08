@@ -9,7 +9,7 @@
 
 .dot {
     z-index: 10;
-    fill: blue;
+    fill: url(#grad);
     stroke: none;
 }
 
