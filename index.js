@@ -29,14 +29,19 @@ d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson", function(
 initializeDots();
 }
 
-var countries = document.getElementsByClassName('landpath');
-console.log(countries.length);
 
 var rows = [];
 
+
 function initializeDots(){
 
+/**
+*
+* Local csv test data
+*/
+
 var dataSet = "landslide-test-data-truncated.csv";
+
 d3.csv(dataSet, function(d) {
   rows.push(d)
   //Slightly convoluted way of getting just the year from the dataset
@@ -49,16 +54,60 @@ d3.csv(dataSet, function(d) {
     });
 
 
-function addTomap(d, eventYear) {
+/*
+//For testing locally without access to server
+var dataSet = [{
+  "id": 1,
+  "first_name": "Jeanette",
+  "last_name": "Penddreth",
+  "date_": "2011",
+  "longitude": "20.87",
+  "latitude": "-100.18"
+}, {
+  "id": 2,
+  "first_name": "Giavani",
+  "last_name": "Frediani",
+  "date_": "2015",
+  "longitude": "11.40",
+  "latitude": "92.46"
+}, {
+  "id": 3,
+  "first_name": "Noell",
+  "last_name": "Bea",
+  "date_": "2017",
+  "longitude": "45.25",
+  "latitude": "75.41"
+}, {
+  "id": 4,
+  "first_name": "Willard",
+  "last_name": "Valek",
+  "date_": "2005",
+  "longitude": "31.55e",
+  "latitude": "131.35"
+}];
+
+
+d3.json(dataSet, function(d) {
+  rows.push(d)
+  addTomap(d);
+    }, function(error, d) { 
+      //Make timeline       
+    });
+
+*/
+
+function addTomap(d) {
   svg.selectAll("circle")
 		.data(rows).enter()
         .append("circle")
-        .attr("class", `dot dot-${eventYear}`)
+        .attr("class", `dot dot-${d.date_}`)
         .attr("cx",function(d) { return projection([d.longitude,d.latitude])[0]})
 		.attr("cy", function (d) { return projection([d.longitude,d.latitude])[1]})
     .attr("r", "1px")
     .attr("opacity", 0)
 }
+
+
 }
 
 

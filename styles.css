@@ -1,5 +1,4 @@
 :root {
-    --bg-color: #EDF5E1;
     --dark-accent: #05386B;
     --main: #379683;
     --light: #5CDB95;
@@ -8,7 +7,9 @@
 
 
 body {
-    background-color: var(--bg-color);
+    background-color: var(--lightest);
+    max-height: 100vh;
+    max-width: 100vw;
 }
 
 #worldMap {
@@ -18,7 +19,7 @@ body {
     width: 100vw;
     height: 50vh;
     margin: auto;
-    outline: 1px solid var(--light);
+    outline: 1px solid var(--main);
 }
 
 .landpath {
@@ -40,18 +41,124 @@ body {
     fill: orange;
 }
 
+/* Hides the slider so that custom slider can be made */
+#timeline {
+  -webkit-appearance: none; 
+  width: 100%; /* Specific width is required for Firefox. */
+  background: transparent; /* Otherwise white in Chrome */
+}
+
+#timeline::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+#timeline:focus {
+  outline: var(--light);
+}
+
+#timeline::-ms-track {
+  width: 100%;
+  cursor: pointer;
+
+  /* Hide slider*/
+  background: transparent; 
+  border-color: transparent;
+  color: transparent;
+}
+
+/* All the same stuff for Firefox */
+#timeline::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+/* All the same stuff for IE */
+#timeline::-ms-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+#timeline::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  border: 1px solid #000000;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: var(--main);
+  cursor: pointer;
+  margin-top: -14px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+
+#timeline::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: var(--main);
+  border-radius: 1.3px;
+  border: 0.2px solid var(--dark-accent);
+}
+
+
+#timeline::-moz-range-track {
+  width: 100%;
+  height: 4.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: var(--main);
+  border-radius: 1.3px;
+  border: 0.2px solid var(--dark-accent);
+}
+
+#timeline::-ms-track {
+  width: 100%;
+  height: 4.4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  border-width: 16px 0;
+  color: transparent;
+}
+#timeline::-ms-fill-lower {
+  background: #2a6495;
+  border: 0.2px solid var(--dark-accent);
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+#timeline:focus::-ms-fill-lower {
+  background: var(--main);
+}
+#timeline::-ms-fill-upper {
+  background: var(--main);
+  border: 0.2px solid var(--dark-accent);
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+
+
 .playbutton {
     padding: 20px;
     border-radius: 100px;
-    background-color: var(--dark-accent);
-    color: var(--bg-color);
+    background-color: var(--main);
+    color: var(--lightest);
     box-shadow: 2px 2px 2px var(--light);
-
+    margin: 0 1rem;
 }
 
 .playbutton:focus {
-    border: 0;
-    outline: 0;
+    outline: var(--dark-accent);
+    background-color: var(--dark-accent);
 }
 
 .controls {
@@ -62,6 +169,12 @@ body {
     flex-direction: row;
 }
 
+.play-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .timeline-container {
     width: 80%;
     display: flex;
@@ -70,15 +183,39 @@ body {
 
 #timeline {
     width: 80%;
-    margin: auto;
+    margin: 1.5rem auto;
 }
 
 @media only screen and (max-width: 1068px) {
-   
+    .controls {
+    width: 100;
+    padding: 1rem;
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .play-container {
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+
 }
 
 @media only screen and (max-width: 735px) {
-  #worldMap {
-    height: 75vh;
+  body {
+        font-size: 1.5rem;
   }
+  #worldMap {
+    width: 100vw;
+    height: 60vh;
+  }
+    .playbutton {
+      font-size: 1.5rem;
+      padding: 25px;
+  }
+
 }
