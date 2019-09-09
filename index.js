@@ -15,18 +15,22 @@ playButton.addEventListener("click", togglePlay);
 const timeline = document.getElementById('timeline');
 
 function drawMap() { 
-d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson", function(data){  
-    // Draw the map
+d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson", function(data){
     gMap.selectAll("path")
         .data(data.features)
         .enter()
-        .append("path")       
+        .append("path") 
+        .attr("class", `landpath`)      
           .attr("d", d3.geoPath()
               .projection(projection)
           )
 })
+//Consider making an animation function to make the map load prettily, and initialize dots as a callback to that.
 initializeDots();
 }
+
+var countries = document.getElementsByClassName('landpath');
+console.log(countries.length);
 
 var rows = [];
 

@@ -11,17 +11,17 @@
   <body>
     <svg id="worldMap" >
       <radialGradient id="grad" fx="0.5" fy="0.5" r="1" >
-        <stop stop-color="blue" stop-opacity="1" offset="0"/>
-        <stop stop-color="blue" stop-opacity="0.2" offset="0.6"/>
+        <stop stop-color="#379683" stop-opacity="1" offset="0"/>
+        <stop stop-color="#379683" stop-opacity="0.2" offset="0.6"/>
       </radialGradient>
     </svg>
     <section class="controls">
       <div class="play-container">
         <button id="playbutton" class="playbutton" >PLAY</button>
-        Year: <span id="frame">1776</span>
+        Year: <span id="frame"></span>
       </div>
       <div class="timeline-container">
-        <input id="timeline" type="range" min="1776" max="2018" value="1900" step="1" list="tickmarks" />
+        <input id="timeline" type="range" min="2011" max="2019" value="1900" step="1" list="tickmarks" />
       <datalist id="tickmarks"> </datalist> 
       </div>
     </section>
