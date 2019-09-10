@@ -2,7 +2,7 @@ var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
-var gMap = svg.append("g"); // appended first
+var gMap = svg.append("g"); // appended first so dots are drawn on top rather than behind
 var gDots = svg.append("g");
 
 var projection = d3.geoMercator()
@@ -14,7 +14,11 @@ playButton.addEventListener("click", togglePlay);
 
 const timeline = document.getElementById('timeline');
 
-function drawMap() { 
+timeline.addEventListener('mousedown', pause)
+//timeline.addEventListener('mouseup', setYear)
+
+function drawMap() {
+/*TODO: Adjust svg viewport based on window size */ 
 d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson", function(data){
     gMap.selectAll("path")
         .data(data.features)
@@ -25,7 +29,6 @@ d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson", function(
               .projection(projection)
           )
 })
-//Consider making an animation function to make the map load prettily, and initialize dots as a callback to that.
 initializeDots();
 }
 
@@ -39,7 +42,7 @@ function initializeDots(){
 *
 * Local csv test data
 */
-
+/*
 var dataSet = "landslide-test-data-truncated.csv";
 
 d3.csv(dataSet, function(d) {
@@ -53,8 +56,8 @@ d3.csv(dataSet, function(d) {
       //Make timeline       
     });
 
+*/
 
-/*
 //For testing locally without access to server
 var dataSet = [{
   "id": 1,
@@ -82,19 +85,17 @@ var dataSet = [{
   "first_name": "Willard",
   "last_name": "Valek",
   "date_": "2005",
-  "longitude": "31.55e",
+  "longitude": "31.55",
   "latitude": "131.35"
 }];
 
 
-d3.json(dataSet, function(d) {
-  rows.push(d)
-  addTomap(d);
-    }, function(error, d) { 
-      //Make timeline       
-    });
+for (let i=0;i<dataSet.length;i++) {
+  addTomap(dataSet[i]);
+  rows.push(dataSet[i]);
+  console.log(dataSet[i].latitude);
+}
 
-*/
 
 function addTomap(d) {
   svg.selectAll("circle")
@@ -104,7 +105,7 @@ function addTomap(d) {
         .attr("cx",function(d) { return projection([d.longitude,d.latitude])[0]})
 		.attr("cy", function (d) { return projection([d.longitude,d.latitude])[1]})
     .attr("r", "1px")
-    .attr("opacity", 0)
+    .attr("opacity", 1)
 }
 
 
@@ -115,9 +116,6 @@ function addVideo() {
   //Optionally append video to timeline
 }
 
-function makeTimeline() {
-  //Create draggable timeline
-}
 
 /**
 * Initialize animation variables
@@ -130,13 +128,7 @@ var speed = 300; // ms
 var playing=false;
 var thisYear = 2019;
 
-/*
-* Reimplementing features, not ready yet
-*/ 
-//const timeline = document.getElementById('timeline');
 
-//timeline.addEventListener('mousedown', pause)
-//timeline.addEventListener('mouseup', setYear)
 
 /**
 * Start/stop playback
@@ -148,7 +140,7 @@ function togglePlay() {
     clearInterval( interval );
     //addVideo();
     d3.selectAll('playbutton')
-    .text("Pause");
+    .text("Play");
   }
   else if (playing == false) {
     interval = setInterval(function () {
@@ -164,12 +156,12 @@ function togglePlay() {
       }
       //Set play button
       d3.selectAll('playbutton')
-        .text("Play");
+        .text("Pause");
      //Change bubble opacity to one if year matches
      d3.selectAll(`.dot-${displayYear}`)
       .transition()
       .attr("r", "8px")
-      .attr('opacity', 1)
+      .attr('opacity', 1) //In theory you should just be able to make this a variable based on event type and it should just work
       .duration(500)
       
     }, speed);
@@ -178,7 +170,14 @@ function togglePlay() {
   }
 }
 
-//makeTickmarks();
+function pause() {
+    if ( playing==true ) {
+    playing=false;
+    clearInterval( interval );
+    d3.select('playbutton')
+    .text("Pause");
+  }
+}
 
 
 /*

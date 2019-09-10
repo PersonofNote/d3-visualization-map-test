@@ -17,9 +17,8 @@ body {
     fill: #379683;
     stroke: #379683;
     width: 100vw;
-    height: 50vh;
+    height: 75vh;
     margin: auto;
-    outline: 1px solid var(--main);
 }
 
 .landpath {
@@ -202,6 +201,9 @@ body {
     flex-direction: column-reverse;
     text-align: center;
   }
+   #worldMap {
+    height: 55vh;
+  }
 
 }
 
@@ -210,12 +212,15 @@ body {
         font-size: 1.5rem;
   }
   #worldMap {
-    width: 100vw;
     height: 60vh;
   }
     .playbutton {
       font-size: 1.5rem;
       padding: 25px;
+  }
+
+  #timeline {
+    width: 100%;
   }
 
 }
