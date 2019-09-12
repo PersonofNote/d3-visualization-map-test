@@ -1,9 +1,9 @@
-var svg = d3.select("svg"),
+const svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
-var gMap = svg.append("g"); // appended first so dots are drawn on top rather than behind
-var gDots = svg.append("g");
+const gMap = svg.append("g"); // appended first so dots are drawn on top rather than behind
+const gDots = svg.append("g");
 
 var projection = d3.geoMercator()
     .center([2, 47])                
@@ -11,14 +11,24 @@ var projection = d3.geoMercator()
 
 const playButton = document.getElementById("playbutton");
 playButton.addEventListener("click", togglePlay);
+const playIcons = document.getElementsByClassName("icon-controls");
+
 
 const timeline = document.getElementById('timeline');
+const yearDiv = document.getElementById('frame');
 
-timeline.addEventListener('mousedown', pause)
-//timeline.addEventListener('mouseup', setYear)
+timeline.oninput = function() {
+  console.log(this.value);
+  pause();
+  clearAll();
+  displayYear = this.value;
+  frame = this.value-startYear;
+  for (i=0; i<(this.value-startYear); i++)
+    updateDots(i+startYear);
+}
+
 
 function drawMap() {
-/*TODO: Adjust svg viewport based on window size */ 
 d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson", function(data){
     gMap.selectAll("path")
         .data(data.features)
@@ -34,83 +44,97 @@ initializeDots();
 
 
 var rows = [];
+var events = [];
+
+function addEvents() {
+  const eventData = "world-events.csv";
+  d3.csv(eventData, function(d) {
+    }, function(error, d) { 
+    });
+  }
 
 
 function initializeDots(){
 
-/**
-*
-* Local csv test data
-*/
-/*
-var dataSet = "landslide-test-data-truncated.csv";
+var dataSet = "embassy-data.csv";
 
 d3.csv(dataSet, function(d) {
   rows.push(d)
-  //Slightly convoluted way of getting just the year from the dataset
-  var eventDate = d.date_.split(' ');
-  var eventYearArr = eventDate[0].split('/');
-  var eventYear = eventYearArr[2];
-  addTomap(d, eventYear);
+  addTomap(d);
     }, function(error, d) { 
-      //Make timeline       
+      function fillTimeline() {
+        const years = document.getElementById("yearsList")
+        for (let i=0; i < ((thisYear - startYear) + 1); i ++) {
+          var value = i+startYear;
+            var year = document.createElement('option');
+            year.value = value;
+            if (value == startYear || value == thisYear || value == (Math.floor((thisYear - startYear)/2) + startYear)) {
+              year.label = year.value;
+              year.class = "visible";
+            }
+            years.appendChild(year);
+        }
+    }
+      fillTimeline();     
     });
-
-*/
-
-//For testing locally without access to server
-var dataSet = [{
-  "id": 1,
-  "first_name": "Jeanette",
-  "last_name": "Penddreth",
-  "date_": "2011",
-  "longitude": "20.87",
-  "latitude": "-100.18"
-}, {
-  "id": 2,
-  "first_name": "Giavani",
-  "last_name": "Frediani",
-  "date_": "2015",
-  "longitude": "11.40",
-  "latitude": "92.46"
-}, {
-  "id": 3,
-  "first_name": "Noell",
-  "last_name": "Bea",
-  "date_": "2017",
-  "longitude": "45.25",
-  "latitude": "75.41"
-}, {
-  "id": 4,
-  "first_name": "Willard",
-  "last_name": "Valek",
-  "date_": "2005",
-  "longitude": "31.55",
-  "latitude": "131.35"
-}];
-
-
-for (let i=0;i<dataSet.length;i++) {
-  addTomap(dataSet[i]);
-  rows.push(dataSet[i]);
-  console.log(dataSet[i].latitude);
-}
-
 
 function addTomap(d) {
   svg.selectAll("circle")
 		.data(rows).enter()
         .append("circle")
-        .attr("class", `dot dot-${d.date_}`)
-        .attr("cx",function(d) { return projection([d.longitude,d.latitude])[0]})
-		.attr("cy", function (d) { return projection([d.longitude,d.latitude])[1]})
-    .attr("r", "1px")
-    .attr("opacity", 1)
+        .attr("class", `dot dot-${d.year}`)
+        .attr("event", d.event)
+        .attr("cx",function(d) { return projection([d.lon,d.lat])[0]})
+		    .attr("cy", function (d) { return projection([d.lon,d.lat])[1]})
+        .attr("r", "2px")
+        .attr("fill", "blue")
+        .attr("opacity", 0) 
 }
 
 
 }
 
+
+
+function updateDots(year) {
+       //Change bubble opacity to one if year matches
+       d3.selectAll(`.dot-${year}`)
+       .transition()
+       .attr("r", "8px")
+       .attr('opacity', function(d) {
+         console.log(`${d.country} ${d.event} in ${d.year}`)
+         if(d.event.includes("legation")) {
+           return 0.5;
+         }else if (d.event.includes("embassy")){
+           return 1;
+         }else {
+           return 0;
+  
+         }
+       })
+       .attr('fill', function(d) {
+        if (d.event.includes("closure")) {
+          console.log('Closed');
+          return "red";
+        } 
+       })
+       .duration(500)
+}
+
+function clearAll() {
+  frame = 0;
+  svg.selectAll("circle")
+    .transition()
+    .attr("opacity", 0);
+}
+
+function swapIcons() {
+  for (let icon of playIcons) {
+    console.log(icon.className);
+    icon.classList.toggle("visible");
+  }
+   
+}
 
 function addVideo() {
   //Optionally append video to timeline
@@ -121,13 +145,13 @@ function addVideo() {
 * Initialize animation variables
 **/
 var frame = 0;
-var startYear = 2004;
+var startYear = 1776;
 var displayYear = startYear;
 var interval;
-var speed = 300; // ms
+var speed = 100; // ms
 var playing=false;
-var thisYear = 2019;
-
+var thisYear = new Date().getFullYear();
+console.log(thisYear);
 
 
 /**
@@ -136,57 +160,88 @@ var thisYear = 2019;
 
 function togglePlay() {
   if ( playing==true ) {
+    //playButton.innerHTML = "Play";
     playing=false;
     clearInterval( interval );
     //addVideo();
-    d3.selectAll('playbutton')
-    .text("Play");
+    
   }
   else if (playing == false) {
     interval = setInterval(function () {
       frame++;
+      updateDots(displayYear);
       displayYear = frame+startYear;
       timeline.value = displayYear;
-      console.log(displayYear);
       if(displayYear >= thisYear){
-        frame = 0;
-        svg.selectAll("circle")
-          .transition()
-          .attr("opacity", 0);
+        clearAll();
       }
       //Set play button
-      d3.selectAll('playbutton')
-        .text("Pause");
-     //Change bubble opacity to one if year matches
-     d3.selectAll(`.dot-${displayYear}`)
-      .transition()
-      .attr("r", "8px")
-      .attr('opacity', 1) //In theory you should just be able to make this a variable based on event type and it should just work
-      .duration(500)
+      //playButton.innerHTML = "Pause";
       
     }, speed);
     //removeVideo();
     playing=true;
   }
+  swapIcons();
 }
 
 function pause() {
     if ( playing==true ) {
     playing=false;
     clearInterval( interval );
-    d3.select('playbutton')
-    .text("Pause");
+   // playButton.innerHTML = "Play";
+    //Also add a popup saying what year it is
   }
 }
 
-
+/**********************************************************
+ * jQuery-less version of Chris Coyier's
+ * Value Bubbles for Range Inputs
+ * http://css-tricks.com/value-bubbles-for-range-inputs/ 
+ **********************************************************/
 /*
-function updateBubble() {
-  if rows.map(x => x * 2) {
-    
-  }
+function modifyOffset() {
+	var el, newPoint, newPlace, offset, siblings, k;
+	width    = this.offsetWidth;
+	newPoint = (this.value - this.getAttribute("min")) / (this.getAttribute("max") - this.getAttribute("min"));
+	offset   = -1.3;
+	if (newPoint < 0) { newPlace = 0;  }
+	else if (newPoint > 1) { newPlace = width; }
+	else { newPlace = width * newPoint + offset; offset -= newPoint;}
+	siblings = this.parentNode.childNodes;
+	for (var i = 0; i < siblings.length; i++) {
+		sibling = siblings[i];
+		if (sibling.id == this.id) { k = true; }
+		if ((k == true) && (sibling.nodeName == "OUTPUT")) {
+			outputTag = sibling;
+		}
+	}
+	outputTag.style.left       = newPlace + "px";
+	outputTag.style.marginLeft = offset + "%";
+	outputTag.innerHTML        = this.value;
 }
+
+function modifyInputs() {
+	var inputs = document.getElementsByTagName("input");
+	for (var i = 0; i < inputs.length; i++) {
+		if (inputs[i].getAttribute("type") == "range") {
+			inputs[i].onchange = modifyOffset;
+			
+			// the following taken from http://stackoverflow.com/questions/2856513/trigger-onchange-event-manually
+			if ("fireEvent" in inputs[i]) {
+			    inputs[i].fireEvent("onchange");
+			} else {
+			    var evt = document.createEvent("HTMLEvents");
+			    evt.initEvent("change", false, true);
+			    inputs[i].dispatchEvent(evt);
+			}
+		}
+	}
+}
+
+window.onload = modifyInputs;
 */
 
 
 drawMap();
+addEvents();
