@@ -29,7 +29,7 @@ timeline.oninput = function() {
 
 
 function drawMap() {
-d3.json("/worldmap.geo.json", function(data){
+d3.json("/world-110m.geojson", function(data){
     gMap.selectAll("path")
         .data(data.features)
         .enter()
