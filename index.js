@@ -29,7 +29,7 @@ timeline.oninput = function() {
 
 
 function drawMap() {
-d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson", function(data){
+d3.json("/worldmap.geo.json", function(data){
     gMap.selectAll("path")
         .data(data.features)
         .enter()
@@ -189,6 +189,7 @@ function pause() {
     if ( playing==true ) {
     playing=false;
     clearInterval( interval );
+    swapIcons();
    // playButton.innerHTML = "Play";
     //Also add a popup saying what year it is
   }
