@@ -1,9 +1,9 @@
-const worldMapSvg = d3.select("#worldMap");
+const svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
 
-// console.log(svg);
-
-const gMap = worldMapSvg.append("g"); // appended first so dots are drawn on top rather than behind
-const gDots = worldMapSvg.append("g");
+const gMap = svg.append("g"); // appended first so dots are drawn on top rather than behind
+const gDots = svg.append("g");
 
 var projection = d3.geoMercator()
     .center([2, 47])
@@ -16,7 +16,7 @@ const timeline = document.getElementById('timeline');
 const yearDiv = document.getElementById('frame');
 
 timeline.oninput = function () {
-    // console.log(this.value);
+    console.log(this.value);
     pause();
     clearAll();
     displayYear = this.value;
@@ -53,45 +53,46 @@ function addEvents() {
 function initializeDots() {
 
     var dataSet = "embassy-data.csv";
+
     d3.csv(dataSet, function (d) {
         rows.push(d);
         addTomap(d);
     }, function (error, d) {
-        console.log('filling timeline') ;
+        function fillTimeline() {
+            const years = document.getElementById("yearsList")
+            for (let i = 0; i < ((thisYear - startYear) + 1); i++) {
+                var value = i + startYear;
+                var year = document.createElement('option');
+                year.value = value;
+                if (value == startYear || value == thisYear || value == (Math.floor((thisYear - startYear) / 2) + startYear)) {
+                    year.label = year.value;
+                    year.class = "visible";
+                }
+                years.appendChild(year);
+            }
+        }
         fillTimeline();
     });
-}
 
-function fillTimeline() {
-    const years = document.getElementById("yearsList")
-    for (let i = 0; i < ((thisYear - startYear) + 1); i++) {
-        var value = i + startYear;
-        var year = document.createElement('option');
-        year.value = value;
-        if (value == startYear || value == thisYear || value == (Math.floor((thisYear - startYear) / 2) + startYear)) {
-            year.label = year.value;
-            year.class = "visible";
-        }
-        years.appendChild(year);
+    function addTomap(d) {
+        svg.selectAll("circle")
+            .data(rows).enter()
+            .append("circle")
+            .attr("id", d.country)
+            .attr("class", `dot dot-${d.year}`)
+            .attr("event", d.event)
+            .attr("cx", function (d) {
+                return projection([d.lon, d.lat])[0]
+            })
+            .attr("cy", function (d) {
+                return projection([d.lon, d.lat])[1]
+            })
+            .attr("r", "2px")
+            .attr("fill", "blue")
+            .attr("opacity", 0)
     }
-}
 
-function addTomap(d) {
-    worldMapSvg.selectAll('circle')
-        .data(rows).enter()
-        .append("circle")
-        .attr("id", d.country)
-        .attr("class", `dot dot-${d.year}`)
-        .attr("event", d.event)
-        .attr("cx", function (d) {
-            return projection([d.lon, d.lat])[0];
-        })
-        .attr("cy", function (d) {
-            return projection([d.lon, d.lat])[1]
-        })
-        .attr("r", "2px")
-        .attr("fill", "blue")
-        .attr("opacity", 0)
+
 }
 
 /**
@@ -102,17 +103,17 @@ function addTomap(d) {
 
 function updateDots(year) {
     //Change bubble opacity to one if year matches
-    worldMapSvg.selectAll(`.dot-${year}`)
+    svg.selectAll(`.dot-${year}`)
         .transition()
         .attr("r", function (d) {
             if (d.event.includes("legation")) {
-                // console.log("legation");
+                console.log("legation");
                 return "6px";
             } else if (d.event.includes("embassy")) {
-                // console.log("embassy");
+                console.log("embassy");
                 return "8px";
             } else if (d.event.includes("closure")) {
-                // console.log("closure");
+                console.log("closure");
                 return "1px";
             } else {
                 return;
@@ -134,13 +135,14 @@ function updateDots(year) {
 
 function clearAll() {
     frame = 0;
-    worldMapSvg.selectAll("circle")
+    svg.selectAll("circle")
         .transition()
         .attr("opacity", 0);
 }
 
 function swapIcons() {
     for (let icon of playIcons) {
+        console.log(icon.className);
         icon.classList.toggle("visible");
     }
 
@@ -161,6 +163,7 @@ var interval;
 var speed = 100; // ms TODO: Add variable speed to playback
 var playing = false;
 var thisYear = new Date().getFullYear();
+console.log(thisYear);
 
 
 /**
