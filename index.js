@@ -57,7 +57,6 @@ function initializeDots() {
         rows.push(d);
         addTomap(d);
     }, function (error, d) {
-        console.log('filling timeline') ;
         fillTimeline();
     });
 }
@@ -80,31 +79,37 @@ function addTomap(d) {
     worldMapSvg.selectAll('circle')
         .data(rows).enter()
         .append("circle")
-        .attr("id", d.country)
-        .attr("class", `dot dot-${d.year}`)
-        .attr("event", d.event)
+        .attr("class", `dot dot-${d.year} ${d.country}`)
+        .attr("data-event", d.event)
+        .attr("data-country", d.country)
         .attr("cx", function (d) {
             return projection([d.lon, d.lat])[0];
         })
         .attr("cy", function (d) {
             return projection([d.lon, d.lat])[1]
         })
-        .attr("r", "2px")
+        .attr("r", "6px")
         .attr("fill", "blue")
         .attr("opacity", 0)
 }
 
-/**
- * MAJOR BUG. Right now it's appending multiple circles, one for each event.
- * Possible fixes: Only push and add class if the d.event contains "establish"? And make the id the country name?
- * Select all with that year class, and if ANY of them have the event "closure", adjust the opacity of all?
- */
 
 function updateDots(year) {
-    //Change bubble opacity to one if year matches
-    worldMapSvg.selectAll(`.dot-${year}`)
+    var selectDots = worldMapSvg.selectAll(`.dot-${year}`);
+    //Set all dots for the year to 0 opacity
+    selectDots.each(function(){
+        var targetDot = worldMapSvg.selectAll(`.${this.dataset.country}`)
+        targetDot
         .transition()
+        .attr("opacity", 0)
+        .duration(500)
+    })
+    //Change bubble opacity to one if year matches
+    selectDots
+        .transition()
+        /*
         .attr("r", function (d) {
+            console.log(d);
             if (d.event.includes("legation")) {
                 // console.log("legation");
                 return "6px";
@@ -118,18 +123,19 @@ function updateDots(year) {
                 return;
             }
         })
+        */
         .attr("opacity", function (d) {
             if (d.event.includes("legation")) {
                 return 0.5;
             } else if (d.event.includes("embassy")) {
                 return 1;
             } else if (d.event.includes("closure")) {
-                return 0.5;
+                return 0;
             } else {
                 return;
             }
         })
-        .duration(500)
+
 }
 
 function clearAll() {
@@ -158,7 +164,7 @@ var frame = 0;
 var startYear = 1776;
 var displayYear = startYear;
 var interval;
-var speed = 100; // ms TODO: Add variable speed to playback
+var speed = 50; // ms TODO: Add variable speed to playback
 var playing = false;
 var thisYear = new Date().getFullYear();
 
